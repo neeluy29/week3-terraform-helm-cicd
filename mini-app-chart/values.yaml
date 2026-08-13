@@ -1,0 +1,9 @@
+replicaCount: 1
+
+image:
+  repository: acrtest09.azurecr.io/mini-app
+  tag: "1.0"
+  pullPolicy: Always
+
+service:
+  port: 80
