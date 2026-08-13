@@ -19,6 +19,9 @@ provider "azurerm" {
 resource "azurerm_resource_group" "mini_project" {
   name     = "rg-week3-miniproject"
   location = "Central India"
+  tags = {
+    environment = "week3-miniproject"
+  }
 }
 
 resource "azurerm_storage_account" "mini_project" {
@@ -27,4 +30,7 @@ resource "azurerm_storage_account" "mini_project" {
   location                 = azurerm_resource_group.mini_project.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  tags = {
+    environment = "week3-miniproject"
+  }
 }
