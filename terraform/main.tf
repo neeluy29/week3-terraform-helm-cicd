@@ -34,3 +34,17 @@ resource "azurerm_storage_account" "mini_project" {
     environment = "week3-miniproject"
   }
 }
+resource "azurerm_key_vault" "mini_project" {
+  name                       = "kv-week3-secrets09"
+  location                   = azurerm_resource_group.mini_project.location
+  resource_group_name        = azurerm_resource_group.mini_project.name
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  sku_name                   = "standard"
+  enable_rbac_authorization  = true
+
+  tags = {
+    environment = "week3-miniproject"
+  }
+}
+
+data "azurerm_client_config" "current" {}
