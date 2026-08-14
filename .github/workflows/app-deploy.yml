@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker buildx build --platform linux/arm64 -t acrtest09.azurecr.io/mini-app:1.0 --push ./app
+          docker buildx build --platform linux/arm64 -t acrtest09.azurecr.io/mini-app:${{ github.sha }} --push ./app
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
@@ -53,7 +53,7 @@ jobs:
           OUTPUT=$(az aks command invoke \
             --resource-group rg-aks-private \
             --name private-aks-demo \
-            --command "helm upgrade --install mini-app-release $CHART_PACKAGE -n dev" \
+            --command "helm upgrade --install mini-app-release $CHART_PACKAGE -n dev --set image.tag=${{ github.sha }}" \
             --file "$CHART_PACKAGE")
           echo "$OUTPUT"
           if echo "$OUTPUT" | grep -qiE "error|exception|failed"; then
