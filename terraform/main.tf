@@ -31,7 +31,7 @@ resource "azurerm_storage_account" "mini_project" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   tags = {
-    environment = "miniproject"
+    environment = "miniproject-1"
     
   }
 }
@@ -44,7 +44,7 @@ resource "azurerm_key_vault" "mini_project" {
   enable_rbac_authorization  = true
 
   tags = {
-    environment = "week3-miniproject"
+    environment = "week3-miniproject-1"
   }
 }
 
