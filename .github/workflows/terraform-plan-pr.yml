@@ -75,12 +75,20 @@ jobs:
               .map(line => line.trim())
               .filter(line => line.length > 0);
 
-            github.rest.pulls.requestReviewers({
+            await github.rest.pulls.requestReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
               reviewers: reviewers
-            })
+            });
+
+            const mentions = reviewers.map(r => `@${r}`).join(' ');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${mentions} — please review the Terraform plan posted above before approving this PR.`
+            });
 
       - name: Fail job if plan failed
         if: steps.plan.outcome == 'failure'
