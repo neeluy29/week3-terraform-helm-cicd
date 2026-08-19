@@ -20,7 +20,7 @@ resource "azurerm_resource_group" "mini_project" {
   name     = "rg-week3-miniproject"
   location = "Central India"
   tags = {
-    environment = "miniproject-3"
+    environment = "miniproject-4"
   }
 }
 
