@@ -20,7 +20,7 @@ resource "azurerm_resource_group" "mini_project" {
   name     = "rg-week3-miniproject"
   location = "Central India"
   tags = {
-    environment = "miniproject-3"
+    environment = "miniproject-4"
   }
 }
 
@@ -44,7 +44,7 @@ resource "azurerm_key_vault" "mini_project" {
   enable_rbac_authorization  = true
 
   tags = {
-    environment = "week3-miniproject-3"
+    environment = "week3-miniproject-4"
   }
 }
 

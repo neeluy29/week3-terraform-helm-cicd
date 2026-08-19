@@ -62,6 +62,42 @@ jobs:
               body: output
             })
 
+      - name: Request review after plan succeeds
+        if: steps.plan.outcome == 'success'
+        uses: actions/github-script@v7
+        env:
+          REVIEWERS_FILE: .github/terraform-reviewers.txt
+        with:
+          script: |
+            const fs = require('fs');
+            const reviewers = fs.readFileSync(process.env.REVIEWERS_FILE, 'utf8')
+              .split('\n')
+              .map(line => line.trim())
+              .filter(line => line.length > 0);
+
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              reviewers: reviewers
+            });
+
+            const mentions = reviewers.map(r => `@${r}`).join(' ');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${mentions} — please review the Terraform plan posted above before approving this PR.`
+            });
+
       - name: Fail job if plan failed
         if: steps.plan.outcome == 'failure'
         run: exit 1
+
+  require-approval:
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: terraform-plan-approval
+    steps:
+      - name: Plan approved
+        run: echo "Terraform plan has been reviewed and approved for merge."
