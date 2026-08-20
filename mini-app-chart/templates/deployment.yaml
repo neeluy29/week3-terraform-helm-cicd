@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: mini-app
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       app: mini-app
