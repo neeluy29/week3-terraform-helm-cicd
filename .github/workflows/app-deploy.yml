@@ -67,3 +67,17 @@ jobs:
             --resource-group rg-aks-private \
             --name private-aks-demo \
             --command "kubectl rollout status deployment/mini-app -n dev"
+            
+      - name: Smoke test - health check mini-app
+        run: |
+          OUTPUT=$(az aks command invoke \
+            --resource-group rg-aks-private \
+            --name private-aks-demo \
+            --command "kubectl run smoke-test-$GITHUB_RUN_ID --rm -i --restart=Never --image=curlimages/curl -n dev -- curl -s -o /dev/null -w HTTP_STATUS:%{http_code} http://mini-app-svc")
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "HTTP_STATUS:200"; then
+            echo "Smoke test passed - mini-app responded with HTTP 200"
+          else
+            echo "Smoke test FAILED - mini-app did not respond with HTTP 200"
+            exit 1
+          fi
