@@ -1,9 +1,7 @@
 name: Terraform Plan (PR Preview)
 
 on:
-  pull_request:
-    paths:
-      - 'terraform/**'
+  pull_request: {}
 
 permissions:
   id-token: write
@@ -11,7 +9,25 @@ permissions:
   pull-requests: write
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      terraform_changed: ${{ steps.filter.outputs.terraform }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check whether terraform/** changed
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+
   plan:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.terraform_changed == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -95,7 +111,8 @@ jobs:
         run: exit 1
 
   require-approval:
-    needs: plan
+    needs: [detect-changes, plan]
+    if: needs.detect-changes.outputs.terraform_changed == 'true'
     runs-on: ubuntu-latest
     environment: terraform-plan-approval
     steps:
