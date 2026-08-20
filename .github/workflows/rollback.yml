@@ -1,0 +1,49 @@
+name: Rollback mini-app
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: 'Helm revision number to roll back to (leave blank to roll back to the previous release)'
+        required: false
+        default: ''
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Roll back mini-app-release
+        run: |
+          REVISION="${{ github.event.inputs.revision }}"
+          if [ -z "$REVISION" ]; then
+            CMD="helm rollback mini-app-release -n dev"
+          else
+            CMD="helm rollback mini-app-release $REVISION -n dev"
+          fi
+          OUTPUT=$(az aks command invoke \
+            --resource-group rg-aks-private \
+            --name private-aks-demo \
+            --command "$CMD")
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -qiE "error|exception|failed"; then
+            echo "Rollback command failed inside the cluster"
+            exit 1
+          fi
+
+      - name: Verify rollout after rollback
+        run: |
+          az aks command invoke \
+            --resource-group rg-aks-private \
+            --name private-aks-demo \
+            --command "kubectl rollout status deployment/mini-app -n dev"
