@@ -1,7 +1,8 @@
 name: Terraform Plan (PR Preview)
 
 on:
-  pull_request: {}
+ # pull_request: {}
+  workflow_dispatch: {}
 
 permissions:
   id-token: write

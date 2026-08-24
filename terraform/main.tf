@@ -44,7 +44,7 @@ resource "azurerm_key_vault" "mini_project" {
   enable_rbac_authorization  = true
 
   tags = {
-    environment = "week3-miniproject-1"
+    environment = "week3-miniproject-4"
   }
 }
 
