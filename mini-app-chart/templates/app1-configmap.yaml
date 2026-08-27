@@ -1,0 +1,16 @@
+{{- if .Values.app1.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app1-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>App1 - Second Page</title></head>
+    <body style="font-family: sans-serif; padding: 40px;">
+      <h1>This is App1 - the second page</h1>
+      <p>Reached via HTTPRoute path match on /app1</p>
+    </body>
+    </html>
+{{- end }}
