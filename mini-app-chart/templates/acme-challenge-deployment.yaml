@@ -1,0 +1,37 @@
+{{- if .Values.acmeChallenge.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-challenge
+  labels:
+    app: acme-challenge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acme-challenge
+  template:
+    metadata:
+      labels:
+        app: acme-challenge
+    spec:
+      containers:
+        - name: acme-challenge
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+          volumeMounts:
+            - name: challenge
+              mountPath: /usr/share/nginx/html/.well-known/acme-challenge
+      volumes:
+        - name: challenge
+          configMap:
+            name: acme-challenge-html
+{{- end }}

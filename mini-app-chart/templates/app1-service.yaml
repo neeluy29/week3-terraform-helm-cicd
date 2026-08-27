@@ -1,0 +1,14 @@
+{{- if .Values.app1.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-svc
+  labels:
+    app: app1
+spec:
+  selector:
+    app: app1
+  ports:
+    - port: {{ .Values.app1.service.port }}
+      targetPort: 80
+{{- end }}

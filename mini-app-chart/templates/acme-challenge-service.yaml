@@ -1,0 +1,14 @@
+{{- if .Values.acmeChallenge.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-challenge-svc
+  labels:
+    app: acme-challenge
+spec:
+  selector:
+    app: acme-challenge
+  ports:
+    - port: 80
+      targetPort: 80
+{{- end }}

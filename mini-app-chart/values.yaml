@@ -23,12 +23,44 @@ autoscaling:
   
 secretProof:
   enabled: true
+acmeChallenge:
+  enabled: true
 
 gatewayApi:
   enabled: true
   gatewayClassName: envoy-gateway
   listener:
     port: 80
-  route:
-    path: /
-    pathType: PathPrefix
+  routes:
+    - path: /app1
+      pathType: PathPrefix
+      backendService: app1-svc
+      backendPort: 80
+      rewrite: true
+    - path: /app
+      pathType: PathPrefix
+      backendService: mini-app-svc
+      backendPort: 80
+      rewrite: true
+    - path: /
+      pathType: PathPrefix
+      backendService: mini-app-svc
+      backendPort: 80
+      rewrite: false
+    - path: /.well-known/acme-challenge/
+      pathType: PathPrefix
+      backendService: acme-challenge-svc
+      backendPort: 80
+      rewrite: false
+    
+app1:
+  enabled: true
+  image: nginx:alpine
+  replicas: 1
+  service:
+    port: 80
+
+tls:
+  enabled: true
+  secretName: miniapp-tls
+  secretStoreName: azure-keyvault-store

@@ -9,11 +9,21 @@ spec:
   parentRefs:
     - name: mini-app-gateway
   rules:
+    {{- range .Values.gatewayApi.routes }}
     - matches:
         - path:
-            type: {{ .Values.gatewayApi.route.pathType }}
-            value: {{ .Values.gatewayApi.route.path }}
+            type: {{ .pathType }}
+            value: {{ .path }}
+      {{- if .rewrite }}
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      {{- end }}
       backendRefs:
-        - name: mini-app-svc
-          port: {{ .Values.service.port }}
+        - name: {{ .backendService }}
+          port: {{ .backendPort }}
+    {{- end }}
 {{- end }}

@@ -1,0 +1,9 @@
+{{- if .Values.acmeChallenge.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: acme-challenge-html
+data:
+  placeholder.txt: |
+    acme-challenge-placeholder
+{{- end }}
